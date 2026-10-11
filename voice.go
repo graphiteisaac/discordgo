@@ -1,5 +1,5 @@
 // Discordgo - Discord bindings for Go
-// Available at https://forge.isaac.zone/isaac/discordgo
+// Available at https://forge.isaac.zone/isaac/nucord
 
 // Copyright 2015-2016 Bruce Marriner <bruce@sqls.net>.  All rights reserved.
 // Use of this source code is governed by a BSD-style
@@ -7,7 +7,7 @@
 
 // This file contains code related to Discord voice suppport
 
-package discordgo
+package nucord
 
 import (
 	"crypto/aes"

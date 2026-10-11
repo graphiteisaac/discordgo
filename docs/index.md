@@ -1,6 +1,6 @@
 ## DiscordGo
 <hr>
-<img align="right" src="https://forge.isaac.zone/isaac/discordgo/blob/master/docs/img/discordgo.png">
+<img align="right" src="https://forge.isaac.zone/isaac/nucord/blob/master/docs/img/nucord.png">
 
 [Go](https://golang.org/) (Golang) interface for the [Discord](https://discord.com/) 
 chat service.  Provides both low-level direct bindings to the 
@@ -20,9 +20,9 @@ gamers that's free, secure, and works on both your desktop and phone.
 
 ### Learn More
 * Check out the [Getting Started](GettingStarted.md) section
-* Read the reference docs on [Godoc](https://godoc.org/forge.isaac.zone/isaac/discordgo) or [GoWalker](https://gowalker.org/github.com/bwmarrin/discordgo)
-* Try the [examples](https://forge.isaac.zone/isaac/discordgo/tree/master/examples)
-* Explore [Awesome DiscordGo](https://forge.isaac.zone/isaac/discordgo/wiki/Awesome-DiscordGo)
+* Read the reference docs on [Godoc](https://godoc.org/forge.isaac.zone/isaac/nucord) or [GoWalker](https://gowalker.org/github.com/bwmarrin/nucord)
+* Try the [examples](https://forge.isaac.zone/isaac/nucord/tree/master/examples)
+* Explore [Awesome DiscordGo](https://forge.isaac.zone/isaac/nucord/wiki/Awesome-DiscordGo)
 
 ### Join Us!
 Both of the below links take you to chat channels where you can get more 

@@ -1,4 +1,4 @@
-package discordgo
+package nucord
 
 import (
 	"testing"
@@ -6,7 +6,7 @@ import (
 )
 
 func TestSnowflakeTimestamp(t *testing.T) {
-	// #discordgo channel ID :)
+	// #nucord channel ID :)
 	id := "155361364909621248"
 	parsedTimestamp, err := SnowflakeTimestamp(id)
 

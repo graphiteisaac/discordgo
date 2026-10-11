@@ -1,10 +1,10 @@
-package discordgo_test
+package nucord_test
 
 import (
 	"log"
 	"os"
 
-	"forge.isaac.zone/isaac/discordgo"
+	"forge.isaac.zone/isaac/nucord"
 )
 
 func ExampleApplication() {
@@ -16,14 +16,14 @@ func ExampleApplication() {
 	}
 
 	// Create a new Discordgo session
-	dg, err := discordgo.New(Token)
+	dg, err := nucord.New(Token)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
 	// Create an new Application
-	ap := &discordgo.Application{}
+	ap := &nucord.Application{}
 	ap.Name = "TestApp"
 	ap.Description = "TestDesc"
 	ap, err = dg.ApplicationCreate(ap)

@@ -1,13 +1,13 @@
 // Discordgo - Discord bindings for Go
-// Available at https://forge.isaac.zone/isaac/discordgo
+// Available at https://forge.isaac.zone/isaac/nucord
 
 // Copyright 2015-2016 Bruce Marriner <bruce@sqls.net>.  All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// This file contains code related to discordgo package logging
+// This file contains code related to nucord package logging
 
-package discordgo
+package nucord
 
 import (
 	"fmt"
@@ -34,10 +34,10 @@ const (
 	LogDebug
 )
 
-// Logger can be used to replace the standard logging for discordgo
+// Logger can be used to replace the standard logging for nucord
 var Logger func(msgL, caller int, format string, a ...interface{})
 
-// msglog provides package wide logging consistency for discordgo
+// msglog provides package wide logging consistency for nucord
 // the format, a...  portion this command follows that of fmt.Printf
 //   msgL   : LogLevel of the message
 //   caller : 1 + the number of callers away from the message source

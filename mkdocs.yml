@@ -1,7 +1,7 @@
 site_name: DiscordGo
 site_author: Bruce Marriner
-site_url: http://bwmarrin.github.io/discordgo/
-repo_url: https://forge.isaac.zone/isaac/discordgo
+site_url: http://bwmarrin.github.io/nucord/
+repo_url: https://forge.isaac.zone/isaac/nucord
 
 dev_addr: 0.0.0.0:8000
 theme: yeti

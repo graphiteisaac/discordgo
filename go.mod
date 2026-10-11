@@ -1,4 +1,4 @@
-module forge.isaac.zone/isaac/discordgo
+module forge.isaac.zone/isaac/nucord
 
 go 1.25
 

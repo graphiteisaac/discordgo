@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"strings"
 
-	"forge.isaac.zone/isaac/discordgo"
+	"forge.isaac.zone/isaac/nucord"
 )
 
 // Bot parameters
@@ -20,7 +20,7 @@ var (
 	ResultsChannel = flag.String("results", "", "Channel where send survey results to")
 )
 
-var s *discordgo.Session
+var s *nucord.Session
 
 func init() {
 	flag.Parse()
@@ -28,7 +28,7 @@ func init() {
 
 func init() {
 	var err error
-	s, err = discordgo.New("Bot " + *BotToken)
+	s, err = nucord.New("Bot " + *BotToken)
 	if err != nil {
 		log.Fatalf("Invalid bot parameters: %v", err)
 	}
@@ -37,29 +37,29 @@ func init() {
 var required = true
 
 var (
-	commands = []discordgo.ApplicationCommand{
+	commands = []nucord.ApplicationCommand{
 		{
 			Name:        "modals-survey",
 			Description: "Take a survey about modals",
 		},
 	}
-	commandsHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-		"modals-survey": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-				Type: discordgo.InteractionResponseModal,
-				Data: &discordgo.InteractionResponseData{
+	commandsHandlers = map[string]func(s *nucord.Session, i *nucord.InteractionCreate){
+		"modals-survey": func(s *nucord.Session, i *nucord.InteractionCreate) {
+			err := s.InteractionRespond(i.Interaction, &nucord.InteractionResponse{
+				Type: nucord.InteractionResponseModal,
+				Data: &nucord.InteractionResponseData{
 					CustomID: "modals_survey_" + i.Interaction.Member.User.ID,
 					Title:    "Modals survey",
-					Flags:    discordgo.MessageFlagsIsComponentsV2,
-					Components: []discordgo.MessageComponent{
-						discordgo.Label{
+					Flags:    nucord.MessageFlagsIsComponentsV2,
+					Components: []nucord.MessageComponent{
+						nucord.Label{
 							Label:       "How would you rate them?",
 							Description: "On a scale from terrible to awesome",
-							Component: discordgo.SelectMenu{
-								MenuType:    discordgo.StringSelectMenu,
+							Component: nucord.SelectMenu{
+								MenuType:    nucord.StringSelectMenu,
 								CustomID:    "rating",
 								Placeholder: "Your rating...",
-								Options: []discordgo.SelectMenuOption{
+								Options: []nucord.SelectMenuOption{
 									{Label: "Terrible", Value: "terrible"},
 									{Label: "Bad", Value: "bad"},
 									{Label: "Neutral", Value: "neutral", Default: true},
@@ -68,12 +68,12 @@ var (
 								},
 							},
 						},
-						discordgo.Label{
+						nucord.Label{
 							Label:       "What would you suggest to improve them?",
 							Description: "Please provide as much info as possible!",
-							Component: discordgo.TextInput{
+							Component: nucord.TextInput{
 								CustomID:  "suggestions",
-								Style:     discordgo.TextInputParagraph,
+								Style:     nucord.TextInputParagraph,
 								Required:  &required,
 								MaxLength: 2000,
 							},
@@ -89,22 +89,22 @@ var (
 )
 
 func main() {
-	s.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
+	s.AddHandler(func(s *nucord.Session, r *nucord.Ready) {
 		log.Println("Bot is up!")
 	})
 
-	s.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	s.AddHandler(func(s *nucord.Session, i *nucord.InteractionCreate) {
 		switch i.Type {
-		case discordgo.InteractionApplicationCommand:
+		case nucord.InteractionApplicationCommand:
 			if h, ok := commandsHandlers[i.ApplicationCommandData().Name]; ok {
 				h(s, i)
 			}
-		case discordgo.InteractionModalSubmit:
-			err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-				Type: discordgo.InteractionResponseChannelMessageWithSource,
-				Data: &discordgo.InteractionResponseData{
+		case nucord.InteractionModalSubmit:
+			err := s.InteractionRespond(i.Interaction, &nucord.InteractionResponse{
+				Type: nucord.InteractionResponseChannelMessageWithSource,
+				Data: &nucord.InteractionResponseData{
 					Content: "Thank you for taking your time to fill this survey",
-					Flags:   discordgo.MessageFlagsEphemeral,
+					Flags:   nucord.MessageFlagsEphemeral,
 				},
 			})
 			if err != nil {
@@ -120,8 +120,8 @@ func main() {
 			_, err = s.ChannelMessageSend(*ResultsChannel, fmt.Sprintf(
 				"Feedback received. From <@%s>\n\n**Rating**:\n%s\n\n**Suggestions**:\n%s",
 				userid,
-				data.Components[0].(*discordgo.Label).Component.(*discordgo.SelectMenu).Values[0],
-				data.Components[1].(*discordgo.Label).Component.(*discordgo.TextInput).Value,
+				data.Components[0].(*nucord.Label).Component.(*nucord.SelectMenu).Values[0],
+				data.Components[1].(*nucord.Label).Component.(*nucord.TextInput).Value,
 			))
 			if err != nil {
 				panic(err)

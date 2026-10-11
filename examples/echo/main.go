@@ -7,12 +7,12 @@ import (
 	"os/signal"
 	"strings"
 
-	"forge.isaac.zone/isaac/discordgo"
+	"forge.isaac.zone/isaac/nucord"
 )
 
-type optionMap = map[string]*discordgo.ApplicationCommandInteractionDataOption
+type optionMap = map[string]*nucord.ApplicationCommandInteractionDataOption
 
-func parseOptions(options []*discordgo.ApplicationCommandInteractionDataOption) (om optionMap) {
+func parseOptions(options []*nucord.ApplicationCommandInteractionDataOption) (om optionMap) {
 	om = make(optionMap)
 	for _, opt := range options {
 		om[opt.Name] = opt
@@ -20,14 +20,14 @@ func parseOptions(options []*discordgo.ApplicationCommandInteractionDataOption) 
 	return
 }
 
-func interactionAuthor(i *discordgo.Interaction) *discordgo.User {
+func interactionAuthor(i *nucord.Interaction) *nucord.User {
 	if i.Member != nil {
 		return i.Member.User
 	}
 	return i.User
 }
 
-func handleEcho(s *discordgo.Session, i *discordgo.InteractionCreate, opts optionMap) {
+func handleEcho(s *nucord.Session, i *nucord.InteractionCreate, opts optionMap) {
 	builder := new(strings.Builder)
 	if v, ok := opts["author"]; ok && v.BoolValue() {
 		author := interactionAuthor(i.Interaction)
@@ -35,9 +35,9 @@ func handleEcho(s *discordgo.Session, i *discordgo.InteractionCreate, opts optio
 	}
 	builder.WriteString(opts["message"].StringValue())
 
-	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
+	err := s.InteractionRespond(i.Interaction, &nucord.InteractionResponse{
+		Type: nucord.InteractionResponseChannelMessageWithSource,
+		Data: &nucord.InteractionResponseData{
 			Content: builder.String(),
 		},
 	})
@@ -47,21 +47,21 @@ func handleEcho(s *discordgo.Session, i *discordgo.InteractionCreate, opts optio
 	}
 }
 
-var commands = []*discordgo.ApplicationCommand{
+var commands = []*nucord.ApplicationCommand{
 	{
 		Name:        "echo",
 		Description: "Say something through a bot",
-		Options: []*discordgo.ApplicationCommandOption{
+		Options: []*nucord.ApplicationCommandOption{
 			{
 				Name:        "message",
 				Description: "Contents of the message",
-				Type:        discordgo.ApplicationCommandOptionString,
+				Type:        nucord.ApplicationCommandOptionString,
 				Required:    true,
 			},
 			{
 				Name:        "author",
 				Description: "Whether to prepend message's author",
-				Type:        discordgo.ApplicationCommandOptionBoolean,
+				Type:        nucord.ApplicationCommandOptionBoolean,
 			},
 		},
 	},
@@ -79,10 +79,10 @@ func main() {
 		log.Fatal("application id is not set")
 	}
 
-	session, _ := discordgo.New("Bot " + *Token)
+	session, _ := nucord.New("Bot " + *Token)
 
-	session.HandleInteractionCreate(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-		if i.Type != discordgo.InteractionApplicationCommand {
+	session.HandleInteractionCreate(func(s *nucord.Session, i *nucord.InteractionCreate) {
+		if i.Type != nucord.InteractionApplicationCommand {
 			return
 		}
 
@@ -94,7 +94,7 @@ func main() {
 		handleEcho(s, i, parseOptions(data.Options))
 	})
 
-	session.HandleReady(func(s *discordgo.Session, r *discordgo.Ready) {
+	session.HandleReady(func(s *nucord.Session, r *nucord.Ready) {
 		log.Printf("Logged in as %s", r.User.String())
 	})
 

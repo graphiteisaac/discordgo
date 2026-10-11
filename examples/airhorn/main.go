@@ -11,7 +11,7 @@ import (
 	"syscall"
 	"time"
 
-	"forge.isaac.zone/isaac/discordgo"
+	"forge.isaac.zone/isaac/nucord"
 )
 
 func init() {
@@ -38,7 +38,7 @@ func main() {
 	}
 
 	// Create a new Discord session using the provided bot token.
-	dg, err := discordgo.New("Bot " + token)
+	dg, err := nucord.New("Bot " + token)
 	if err != nil {
 		fmt.Println("Error creating Discord session: ", err)
 		return
@@ -55,7 +55,7 @@ func main() {
 
 	// We need information about guilds (which includes their channels),
 	// messages and voice states.
-	dg.Identify.Intents = discordgo.IntentsGuilds | discordgo.IntentsGuildMessages | discordgo.IntentsGuildVoiceStates
+	dg.Identify.Intents = nucord.IntentsGuilds | nucord.IntentsGuildMessages | nucord.IntentsGuildVoiceStates
 
 	// Open the websocket and begin listening.
 	err = dg.Open()
@@ -75,7 +75,7 @@ func main() {
 
 // This function will be called (due to AddHandler above) when the bot receives
 // the "ready" event from Discord.
-func ready(s *discordgo.Session, event *discordgo.Ready) {
+func ready(s *nucord.Session, event *nucord.Ready) {
 
 	// Set the playing status.
 	s.UpdateGameStatus(0, "!airhorn")
@@ -83,7 +83,7 @@ func ready(s *discordgo.Session, event *discordgo.Ready) {
 
 // This function will be called (due to AddHandler above) every time a new
 // message is created on any channel that the autenticated bot has access to.
-func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
+func messageCreate(s *nucord.Session, m *nucord.MessageCreate) {
 
 	// Ignore all messages created by the bot itself
 	// This isn't required in this specific example but it's a good practice.
@@ -124,7 +124,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 // This function will be called (due to AddHandler above) every time a new
 // guild is joined.
-func guildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
+func guildCreate(s *nucord.Session, event *nucord.GuildCreate) {
 
 	if event.Guild.Unavailable {
 		return
@@ -183,7 +183,7 @@ func loadSound() error {
 }
 
 // playSound plays the current buffer to the provided channel.
-func playSound(s *discordgo.Session, guildID, channelID string) (err error) {
+func playSound(s *nucord.Session, guildID, channelID string) (err error) {
 
 	// Join the provided voice channel.
 	vc, err := s.ChannelVoiceJoin(guildID, channelID, false, true)

@@ -7,7 +7,7 @@ import (
 	"os"
 	"os/signal"
 
-	"forge.isaac.zone/isaac/discordgo"
+	"forge.isaac.zone/isaac/nucord"
 )
 
 // Bot parameters
@@ -17,29 +17,29 @@ var (
 	RemoveCommands = flag.Bool("rmcmd", true, "Remove all commands after shutdowning or not")
 )
 
-var s *discordgo.Session
+var s *nucord.Session
 
 func init() { flag.Parse() }
 
 func init() {
 	var err error
-	s, err = discordgo.New("Bot " + *BotToken)
+	s, err = nucord.New("Bot " + *BotToken)
 	if err != nil {
 		log.Fatalf("Invalid bot parameters: %v", err)
 	}
 }
 
 var (
-	commands = []*discordgo.ApplicationCommand{
+	commands = []*nucord.ApplicationCommand{
 		{
 			Name:        "single-autocomplete",
 			Description: "Showcase of single autocomplete option",
-			Type:        discordgo.ChatApplicationCommand,
-			Options: []*discordgo.ApplicationCommandOption{
+			Type:        nucord.ChatApplicationCommand,
+			Options: []*nucord.ApplicationCommandOption{
 				{
 					Name:         "autocomplete-option",
 					Description:  "Autocomplete option",
-					Type:         discordgo.ApplicationCommandOptionString,
+					Type:         nucord.ApplicationCommandOptionString,
 					Required:     true,
 					Autocomplete: true,
 				},
@@ -48,19 +48,19 @@ var (
 		{
 			Name:        "multi-autocomplete",
 			Description: "Showcase of multiple autocomplete option",
-			Type:        discordgo.ChatApplicationCommand,
-			Options: []*discordgo.ApplicationCommandOption{
+			Type:        nucord.ChatApplicationCommand,
+			Options: []*nucord.ApplicationCommandOption{
 				{
 					Name:         "autocomplete-option-1",
 					Description:  "Autocomplete option 1",
-					Type:         discordgo.ApplicationCommandOptionString,
+					Type:         nucord.ApplicationCommandOptionString,
 					Required:     true,
 					Autocomplete: true,
 				},
 				{
 					Name:         "autocomplete-option-2",
 					Description:  "Autocomplete option 2",
-					Type:         discordgo.ApplicationCommandOptionString,
+					Type:         nucord.ApplicationCommandOptionString,
 					Required:     true,
 					Autocomplete: true,
 				},
@@ -68,14 +68,14 @@ var (
 		},
 	}
 
-	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-		"single-autocomplete": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	commandHandlers = map[string]func(s *nucord.Session, i *nucord.InteractionCreate){
+		"single-autocomplete": func(s *nucord.Session, i *nucord.InteractionCreate) {
 			switch i.Type {
-			case discordgo.InteractionApplicationCommand:
+			case nucord.InteractionApplicationCommand:
 				data := i.ApplicationCommandData()
-				err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-					Type: discordgo.InteractionResponseChannelMessageWithSource,
-					Data: &discordgo.InteractionResponseData{
+				err := s.InteractionRespond(i.Interaction, &nucord.InteractionResponse{
+					Type: nucord.InteractionResponseChannelMessageWithSource,
+					Data: &nucord.InteractionResponseData{
 						Content: fmt.Sprintf(
 							"You picked %q autocompletion",
 							// Autocompleted options do not affect usual flow of handling application command. They are ordinary options at this stage
@@ -87,9 +87,9 @@ var (
 					panic(err)
 				}
 			// Autocomplete options introduce a new interaction type (8) for returning custom autocomplete results.
-			case discordgo.InteractionApplicationCommandAutocomplete:
+			case nucord.InteractionApplicationCommandAutocomplete:
 				data := i.ApplicationCommandData()
-				choices := []*discordgo.ApplicationCommandOptionChoice{
+				choices := []*nucord.ApplicationCommandOptionChoice{
 					{
 						Name:  "Autocomplete",
 						Value: "autocomplete",
@@ -114,15 +114,15 @@ var (
 				}
 
 				if data.Options[0].StringValue() != "" {
-					choices = append(choices, &discordgo.ApplicationCommandOptionChoice{
+					choices = append(choices, &nucord.ApplicationCommandOptionChoice{
 						Name:  data.Options[0].StringValue(), // To get user input you just get value of the autocomplete option.
 						Value: "choice_custom",
 					})
 				}
 
-				err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-					Type: discordgo.InteractionApplicationCommandAutocompleteResult,
-					Data: &discordgo.InteractionResponseData{
+				err := s.InteractionRespond(i.Interaction, &nucord.InteractionResponse{
+					Type: nucord.InteractionApplicationCommandAutocompleteResult,
+					Data: &nucord.InteractionResponseData{
 						Choices: choices, // This is basically the whole purpose of autocomplete interaction - return custom options to the user.
 					},
 				})
@@ -131,13 +131,13 @@ var (
 				}
 			}
 		},
-		"multi-autocomplete": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+		"multi-autocomplete": func(s *nucord.Session, i *nucord.InteractionCreate) {
 			switch i.Type {
-			case discordgo.InteractionApplicationCommand:
+			case nucord.InteractionApplicationCommand:
 				data := i.ApplicationCommandData()
-				err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-					Type: discordgo.InteractionResponseChannelMessageWithSource,
-					Data: &discordgo.InteractionResponseData{
+				err := s.InteractionRespond(i.Interaction, &nucord.InteractionResponse{
+					Type: nucord.InteractionResponseChannelMessageWithSource,
+					Data: &nucord.InteractionResponseData{
 						Content: fmt.Sprintf(
 							"Option 1: %s\nOption 2: %s",
 							data.Options[0].StringValue(),
@@ -148,13 +148,13 @@ var (
 				if err != nil {
 					panic(err)
 				}
-			case discordgo.InteractionApplicationCommandAutocomplete:
+			case nucord.InteractionApplicationCommandAutocomplete:
 				data := i.ApplicationCommandData()
-				var choices []*discordgo.ApplicationCommandOptionChoice
+				var choices []*nucord.ApplicationCommandOptionChoice
 				switch {
 				// In this case there are multiple autocomplete options. The Focused field shows which option user is focused on.
 				case data.Options[0].Focused:
-					choices = []*discordgo.ApplicationCommandOptionChoice{
+					choices = []*nucord.ApplicationCommandOptionChoice{
 						{
 							Name:  "Autocomplete 4 first option",
 							Value: "autocomplete_default",
@@ -173,14 +173,14 @@ var (
 						},
 					}
 					if data.Options[0].StringValue() != "" {
-						choices = append(choices, &discordgo.ApplicationCommandOptionChoice{
+						choices = append(choices, &nucord.ApplicationCommandOptionChoice{
 							Name:  data.Options[0].StringValue(),
 							Value: "choice_custom",
 						})
 					}
 
 				case data.Options[1].Focused:
-					choices = []*discordgo.ApplicationCommandOptionChoice{
+					choices = []*nucord.ApplicationCommandOptionChoice{
 						{
 							Name:  "Autocomplete 4 second option",
 							Value: "autocomplete_1_default",
@@ -199,16 +199,16 @@ var (
 						},
 					}
 					if data.Options[1].StringValue() != "" {
-						choices = append(choices, &discordgo.ApplicationCommandOptionChoice{
+						choices = append(choices, &nucord.ApplicationCommandOptionChoice{
 							Name:  data.Options[1].StringValue(),
 							Value: "choice_custom_2",
 						})
 					}
 				}
 
-				err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-					Type: discordgo.InteractionApplicationCommandAutocompleteResult,
-					Data: &discordgo.InteractionResponseData{
+				err := s.InteractionRespond(i.Interaction, &nucord.InteractionResponse{
+					Type: nucord.InteractionApplicationCommandAutocompleteResult,
+					Data: &nucord.InteractionResponseData{
 						Choices: choices,
 					},
 				})
@@ -221,8 +221,8 @@ var (
 )
 
 func main() {
-	s.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) { log.Println("Bot is up!") })
-	s.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	s.AddHandler(func(s *nucord.Session, r *nucord.Ready) { log.Println("Bot is up!") })
+	s.AddHandler(func(s *nucord.Session, i *nucord.InteractionCreate) {
 		if h, ok := commandHandlers[i.ApplicationCommandData().Name]; ok {
 			h(s, i)
 		}

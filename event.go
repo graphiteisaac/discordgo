@@ -1,4 +1,4 @@
-package discordgo
+package nucord
 
 // EventHandler is an interface for Discord events.
 type EventHandler interface {
@@ -103,12 +103,12 @@ func (s *Session) addEventHandlerOnce(eventHandler EventHandler) func() {
 //
 // eg:
 //
-//	Session.AddHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
+//	Session.AddHandler(func(s *nucord.Session, m *nucord.MessageCreate) {
 //	})
 //
 // or:
 //
-//	Session.AddHandler(func(s *discordgo.Session, m *discordgo.PresenceUpdate) {
+//	Session.AddHandler(func(s *nucord.Session, m *nucord.PresenceUpdate) {
 //	})
 //
 // List of events can be found at this page, with corresponding names in the

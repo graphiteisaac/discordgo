@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"forge.isaac.zone/isaac/discordgo"
+	"forge.isaac.zone/isaac/nucord"
 	"github.com/joho/godotenv"
 	"golang.org/x/oauth2"
 )
@@ -36,32 +36,32 @@ func init() {
 }
 
 func main() {
-	s, _ := discordgo.New("Bot " + *token)
+	s, _ := nucord.New("Bot " + *token)
 
-	_, err := s.ApplicationRoleConnectionMetadataUpdate(*appID, []*discordgo.ApplicationRoleConnectionMetadata{
+	_, err := s.ApplicationRoleConnectionMetadataUpdate(*appID, []*nucord.ApplicationRoleConnectionMetadata{
 		{
-			Type:                     discordgo.ApplicationRoleConnectionMetadataIntegerGreaterThanOrEqual,
+			Type:                     nucord.ApplicationRoleConnectionMetadataIntegerGreaterThanOrEqual,
 			Key:                      "loc",
 			Name:                     "Lines of Code",
-			NameLocalizations:        map[discordgo.Locale]string{},
+			NameLocalizations:        map[nucord.Locale]string{},
 			Description:              "Total lines of code written",
-			DescriptionLocalizations: map[discordgo.Locale]string{},
+			DescriptionLocalizations: map[nucord.Locale]string{},
 		},
 		{
-			Type:                     discordgo.ApplicationRoleConnectionMetadataBooleanEqual,
+			Type:                     nucord.ApplicationRoleConnectionMetadataBooleanEqual,
 			Key:                      "gopher",
 			Name:                     "Gopher",
-			NameLocalizations:        map[discordgo.Locale]string{},
+			NameLocalizations:        map[nucord.Locale]string{},
 			Description:              "Writes in Go",
-			DescriptionLocalizations: map[discordgo.Locale]string{},
+			DescriptionLocalizations: map[nucord.Locale]string{},
 		},
 		{
-			Type:                     discordgo.ApplicationRoleConnectionMetadataDatetimeGreaterThanOrEqual,
+			Type:                     nucord.ApplicationRoleConnectionMetadataDatetimeGreaterThanOrEqual,
 			Key:                      "first_line",
 			Name:                     "First line written",
-			NameLocalizations:        map[discordgo.Locale]string{},
+			NameLocalizations:        map[nucord.Locale]string{},
 			Description:              "Days since the first line of code",
-			DescriptionLocalizations: map[discordgo.Locale]string{},
+			DescriptionLocalizations: map[nucord.Locale]string{},
 		},
 	})
 	if err != nil {
@@ -91,7 +91,7 @@ func main() {
 		}
 
 		// Construct a temporary session with user's OAuth2 access_token.
-		ts, _ := discordgo.New("Bearer " + tokens.AccessToken)
+		ts, _ := nucord.New("Bearer " + tokens.AccessToken)
 
 		// Retrive the user data.
 		u, err := ts.User("@me")
@@ -109,7 +109,7 @@ func main() {
 		}
 
 		// And submit it back to discord.
-		_, err = ts.UserApplicationRoleConnectionUpdate(*appID, &discordgo.ApplicationRoleConnection{
+		_, err = ts.UserApplicationRoleConnectionUpdate(*appID, &nucord.ApplicationRoleConnection{
 			PlatformName:     "Discord Gophers",
 			PlatformUsername: u.Username,
 			Metadata:         metadata,

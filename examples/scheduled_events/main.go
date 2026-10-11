@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"time"
 
-	"forge.isaac.zone/isaac/discordgo"
+	"forge.isaac.zone/isaac/nucord"
 )
 
 // Flags
@@ -21,8 +21,8 @@ var (
 func init() { flag.Parse() }
 
 func main() {
-	s, _ := discordgo.New("Bot " + *BotToken)
-	s.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
+	s, _ := nucord.New("Bot " + *BotToken)
+	s.AddHandler(func(s *nucord.Session, r *nucord.Ready) {
 		fmt.Println("Bot is ready")
 	})
 
@@ -43,20 +43,20 @@ func main() {
 }
 
 // Create a new event on guild
-func createAmazingEvent(s *discordgo.Session) *discordgo.GuildScheduledEvent {
+func createAmazingEvent(s *nucord.Session) *nucord.GuildScheduledEvent {
 	// Define the starting time (must be in future)
 	startingTime := time.Now().Add(1 * time.Hour)
 	// Define the ending time (must be after starting time)
 	endingTime := startingTime.Add(30 * time.Minute)
 	// Create the event
-	scheduledEvent, err := s.GuildScheduledEventCreate(*GuildID, &discordgo.GuildScheduledEventParams{
+	scheduledEvent, err := s.GuildScheduledEventCreate(*GuildID, &nucord.GuildScheduledEventParams{
 		Name:               "Amazing Event",
 		Description:        "This event will start in 1 hour and last 30 minutes",
 		ScheduledStartTime: &startingTime,
 		ScheduledEndTime:   &endingTime,
-		EntityType:         discordgo.GuildScheduledEventEntityTypeVoice,
+		EntityType:         nucord.GuildScheduledEventEntityTypeVoice,
 		ChannelID:          *VoiceChannelID,
-		PrivacyLevel:       discordgo.GuildScheduledEventPrivacyLevelGuildOnly,
+		PrivacyLevel:       nucord.GuildScheduledEventPrivacyLevelGuildOnly,
 	})
 	if err != nil {
 		log.Printf("Error creating scheduled event: %v", err)
@@ -67,11 +67,11 @@ func createAmazingEvent(s *discordgo.Session) *discordgo.GuildScheduledEvent {
 	return scheduledEvent
 }
 
-func transformEventToExternalEvent(s *discordgo.Session, event *discordgo.GuildScheduledEvent) {
-	scheduledEvent, err := s.GuildScheduledEventEdit(*GuildID, event.ID, &discordgo.GuildScheduledEventParams{
+func transformEventToExternalEvent(s *nucord.Session, event *nucord.GuildScheduledEvent) {
+	scheduledEvent, err := s.GuildScheduledEventEdit(*GuildID, event.ID, &nucord.GuildScheduledEventParams{
 		Name:       "Amazing Event @ Discord Website",
-		EntityType: discordgo.GuildScheduledEventEntityTypeExternal,
-		EntityMetadata: &discordgo.GuildScheduledEventEntityMetadata{
+		EntityType: nucord.GuildScheduledEventEntityTypeExternal,
+		EntityMetadata: &nucord.GuildScheduledEventEntityMetadata{
 			Location: "https://discord.com",
 		},
 	})

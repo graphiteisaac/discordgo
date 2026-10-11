@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"forge.isaac.zone/isaac/discordgo"
+	"forge.isaac.zone/isaac/nucord"
 )
 
 // Flags
@@ -24,14 +24,14 @@ var games map[string]time.Time = make(map[string]time.Time)
 func init() { flag.Parse() }
 
 func main() {
-	s, _ := discordgo.New("Bot " + *BotToken)
-	s.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
+	s, _ := nucord.New("Bot " + *BotToken)
+	s.AddHandler(func(s *nucord.Session, r *nucord.Ready) {
 		fmt.Println("Bot is ready")
 	})
-	s.AddHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
+	s.AddHandler(func(s *nucord.Session, m *nucord.MessageCreate) {
 		if strings.Contains(m.Content, "ping") {
 			if ch, err := s.State.Channel(m.ChannelID); err != nil || !ch.IsThread() {
-				thread, err := s.MessageThreadStartComplex(m.ChannelID, m.ID, &discordgo.ThreadStart{
+				thread, err := s.MessageThreadStartComplex(m.ChannelID, m.ID, &nucord.ThreadStart{
 					Name:                "Pong game with " + m.Author.Username,
 					AutoArchiveDuration: 60,
 					Invitable:           false,
@@ -50,7 +50,7 @@ func main() {
 			if time.Since(games[m.ChannelID]) >= timeout {
 				archived := true
 				locked := true
-				_, err := s.ChannelEditComplex(m.ChannelID, &discordgo.ChannelEdit{
+				_, err := s.ChannelEditComplex(m.ChannelID, &nucord.ChannelEdit{
 					Archived: &archived,
 					Locked:   &locked,
 				})
@@ -60,7 +60,7 @@ func main() {
 			}
 		}
 	})
-	s.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsAllWithoutPrivileged)
+	s.Identify.Intents = nucord.MakeIntent(nucord.IntentsAllWithoutPrivileged)
 
 	err := s.Open()
 	if err != nil {

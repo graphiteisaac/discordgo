@@ -1,17 +1,17 @@
 // Discordgo - Discord bindings for Go
-// Available at https://forge.isaac.zone/isaac/discordgo
+// Available at https://forge.isaac.zone/isaac/nucord
 
 // Copyright 2015-2016 Bruce Marriner <bruce@sqls.net>.  All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
 // This file contains high level helper functions and easy entry points for the
-// entire discordgo package.  These functions are being developed and are very
+// entire nucord package.  These functions are being developed and are very
 // experimental at this point.  They will most likely change so please use the
 // low level functions if that's a problem.
 
-// Package discordgo provides Discord binding for Go
-package discordgo
+// Package nucord provides Discord binding for Go
+package nucord
 
 import (
 	"net/http"
@@ -45,7 +45,7 @@ func New(token string) (s *Session, err error) {
 		MaxRestRetries:                     3,
 		Client:                             &http.Client{Timeout: (20 * time.Second)},
 		Dialer:                             websocket.DefaultDialer,
-		UserAgent:                          "DiscordBot (https://forge.isaac.zone/isaac/discordgo, v" + VERSION + ")",
+		UserAgent:                          "DiscordBot (https://forge.isaac.zone/isaac/nucord, v" + VERSION + ")",
 		sequence:                           new(int64),
 		LastHeartbeatAck:                   time.Now().UTC(),
 	}

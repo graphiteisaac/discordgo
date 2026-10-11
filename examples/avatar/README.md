@@ -1,4 +1,4 @@
-<img align="right" alt="DiscordGo logo" src="/docs/img/discordgo.svg" width="200">
+<img align="right" alt="DiscordGo logo" src="/docs/img/nucord.svg" width="200">
 
 ## DiscordGo Avatar Example
 
@@ -45,5 +45,5 @@ The below example shows how to set your Avatar from a local file.
 The below example shows how to set your Avatar from a URL.
 
 ```sh
-./avatar -t TOKEN -u https://raw.githubusercontent.com/bwmarrin/discordgo/master/docs/img/discordgo.svg
+./avatar -t TOKEN -u https://raw.githubusercontent.com/bwmarrin/nucord/master/docs/img/nucord.svg
 ```

@@ -1,4 +1,4 @@
-<img align="right" alt="DiscordGo logo" src="/docs/img/discordgo.svg" width="200">
+<img align="right" alt="DiscordGo logo" src="/docs/img/nucord.svg" width="200">
 
 ## DiscordGo Airhorn Example
 

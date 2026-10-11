@@ -1,5 +1,5 @@
 // Discordgo - Discord bindings for Go
-// Available at https://forge.isaac.zone/isaac/discordgo
+// Available at https://forge.isaac.zone/isaac/nucord
 
 // Copyright 2015-2016 Bruce Marriner <bruce@sqls.net>.  All rights reserved.
 // Use of this source code is governed by a BSD-style
@@ -9,7 +9,7 @@
 // throughout the Discordgo package use these variables for all connections
 // to Discord.  These are all exported and you may modify them if needed.
 
-package discordgo
+package nucord
 
 import "strconv"
 

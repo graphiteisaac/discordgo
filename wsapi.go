@@ -1,5 +1,5 @@
 // Discordgo - Discord bindings for Go
-// Available at https://forge.isaac.zone/isaac/discordgo
+// Available at https://forge.isaac.zone/isaac/nucord
 
 // Copyright 2015-2016 Bruce Marriner <bruce@sqls.net>.  All rights reserved.
 // Use of this source code is governed by a BSD-style
@@ -8,7 +8,7 @@
 // This file contains low level functions for interacting with the Discord
 // data websocket interface.
 
-package discordgo
+package nucord
 
 import (
 	"bytes"
@@ -418,9 +418,9 @@ func (s *Session) UpdateCustomStatus(state string) (err error) {
 	return s.UpdateStatusComplex(data)
 }
 
-// UpdateStatusComplex allows for sending the raw status update data untouched by discordgo.
+// UpdateStatusComplex allows for sending the raw status update data untouched by nucord.
 func (s *Session) UpdateStatusComplex(usd UpdateStatusData) (err error) {
-	// The comment does say "untouched by discordgo", but we might need to lie a bit here.
+	// The comment does say "untouched by nucord", but we might need to lie a bit here.
 	// The Discord documentation lists `activities` as being nullable, but in practice this
 	// doesn't seem to be the case. I had filed an issue about this at
 	// https://github.com/discord/discord-api-docs/issues/2559, but as of writing this

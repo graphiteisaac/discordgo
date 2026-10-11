@@ -1,4 +1,4 @@
-package discordgo
+package nucord
 
 // Locale represents the accepted languages for Discord.
 // https://discord.com/developers/docs/reference#locales

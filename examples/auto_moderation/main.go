@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"sync"
 
-	"forge.isaac.zone/isaac/discordgo"
+	"forge.isaac.zone/isaac/nucord"
 )
 
 // Command line flags
@@ -21,23 +21,23 @@ var (
 func init() { flag.Parse() }
 
 func main() {
-	session, _ := discordgo.New("Bot " + *BotToken)
-	session.Identify.Intents |= discordgo.IntentAutoModerationExecution
-	session.Identify.Intents |= discordgo.IntentMessageContent
+	session, _ := nucord.New("Bot " + *BotToken)
+	session.Identify.Intents |= nucord.IntentAutoModerationExecution
+	session.Identify.Intents |= nucord.IntentMessageContent
 
 	enabled := true
-	rule, err := session.AutoModerationRuleCreate(*GuildID, &discordgo.AutoModerationRule{
+	rule, err := session.AutoModerationRuleCreate(*GuildID, &nucord.AutoModerationRule{
 		Name:        "Auto Moderation example",
-		EventType:   discordgo.AutoModerationEventMessageSend,
-		TriggerType: discordgo.AutoModerationEventTriggerKeyword,
-		TriggerMetadata: &discordgo.AutoModerationTriggerMetadata{
+		EventType:   nucord.AutoModerationEventMessageSend,
+		TriggerType: nucord.AutoModerationEventTriggerKeyword,
+		TriggerMetadata: &nucord.AutoModerationTriggerMetadata{
 			KeywordFilter: []string{"*cat*"},
 			RegexPatterns: []string{"(c|b)at"},
 		},
 
 		Enabled: &enabled,
-		Actions: []discordgo.AutoModerationAction{
-			{Type: discordgo.AutoModerationRuleActionBlockMessage},
+		Actions: []nucord.AutoModerationAction{
+			{Type: nucord.AutoModerationRuleActionBlockMessage},
 		},
 	})
 	if err != nil {
@@ -47,14 +47,14 @@ func main() {
 	fmt.Println("Successfully created the rule")
 	defer session.AutoModerationRuleDelete(*GuildID, rule.ID)
 
-	session.AddHandlerOnce(func(s *discordgo.Session, e *discordgo.AutoModerationActionExecution) {
-		_, err = session.AutoModerationRuleEdit(*GuildID, rule.ID, &discordgo.AutoModerationRule{
-			TriggerMetadata: &discordgo.AutoModerationTriggerMetadata{
+	session.AddHandlerOnce(func(s *nucord.Session, e *nucord.AutoModerationActionExecution) {
+		_, err = session.AutoModerationRuleEdit(*GuildID, rule.ID, &nucord.AutoModerationRule{
+			TriggerMetadata: &nucord.AutoModerationTriggerMetadata{
 				KeywordFilter: []string{"cat"},
 			},
-			Actions: []discordgo.AutoModerationAction{
-				{Type: discordgo.AutoModerationRuleActionTimeout, Metadata: &discordgo.AutoModerationActionMetadata{Duration: 60}},
-				{Type: discordgo.AutoModerationRuleActionSendAlertMessage, Metadata: &discordgo.AutoModerationActionMetadata{
+			Actions: []nucord.AutoModerationAction{
+				{Type: nucord.AutoModerationRuleActionTimeout, Metadata: &nucord.AutoModerationActionMetadata{Duration: 60}},
+				{Type: nucord.AutoModerationRuleActionSendAlertMessage, Metadata: &nucord.AutoModerationActionMetadata{
 					ChannelID: e.ChannelID,
 				}},
 			},
@@ -71,14 +71,14 @@ func main() {
 
 		var counter int
 		var counterMutex sync.Mutex
-		session.AddHandler(func(s *discordgo.Session, e *discordgo.AutoModerationActionExecution) {
+		session.AddHandler(func(s *nucord.Session, e *nucord.AutoModerationActionExecution) {
 			action := "unknown"
 			switch e.Action.Type {
-			case discordgo.AutoModerationRuleActionBlockMessage:
+			case nucord.AutoModerationRuleActionBlockMessage:
 				action = "block message"
-			case discordgo.AutoModerationRuleActionSendAlertMessage:
+			case nucord.AutoModerationRuleActionSendAlertMessage:
 				action = "send alert message into <#" + e.Action.Metadata.ChannelID + ">"
-			case discordgo.AutoModerationRuleActionTimeout:
+			case nucord.AutoModerationRuleActionTimeout:
 				action = "timeout"
 			}
 

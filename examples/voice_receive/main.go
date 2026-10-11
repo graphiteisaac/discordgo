@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"forge.isaac.zone/isaac/discordgo"
+	"forge.isaac.zone/isaac/nucord"
 	"github.com/pion/rtp"
 	"github.com/pion/webrtc/v3/pkg/media"
 	"github.com/pion/webrtc/v3/pkg/media/oggwriter"
@@ -25,7 +25,7 @@ func init() {
 	flag.Parse()
 }
 
-func createPionRTPPacket(p *discordgo.Packet) *rtp.Packet {
+func createPionRTPPacket(p *nucord.Packet) *rtp.Packet {
 	return &rtp.Packet{
 		Header: rtp.Header{
 			Version: 2,
@@ -39,7 +39,7 @@ func createPionRTPPacket(p *discordgo.Packet) *rtp.Packet {
 	}
 }
 
-func handleVoice(c chan *discordgo.Packet) {
+func handleVoice(c chan *nucord.Packet) {
 	files := make(map[uint32]media.Writer)
 	for p := range c {
 		file, ok := files[p.SSRC]
@@ -67,7 +67,7 @@ func handleVoice(c chan *discordgo.Packet) {
 }
 
 func main() {
-	s, err := discordgo.New("Bot " + Token)
+	s, err := nucord.New("Bot " + Token)
 	if err != nil {
 		fmt.Println("error creating Discord session:", err)
 		return
@@ -75,7 +75,7 @@ func main() {
 	defer s.Close()
 
 	// We only really care about receiving voice state updates.
-	s.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsGuildVoiceStates)
+	s.Identify.Intents = nucord.MakeIntent(nucord.IntentsGuildVoiceStates)
 
 	err = s.Open()
 	if err != nil {

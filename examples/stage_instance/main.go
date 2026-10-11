@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	"forge.isaac.zone/isaac/discordgo"
+	"forge.isaac.zone/isaac/nucord"
 )
 
 // Flags
@@ -21,8 +21,8 @@ func init() { flag.Parse() }
 // To be correctly used, the bot needs to be in a guild.
 // All actions must be done on a stage channel event
 func main() {
-	s, _ := discordgo.New("Bot " + *BotToken)
-	s.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
+	s, _ := nucord.New("Bot " + *BotToken)
+	s.AddHandler(func(s *nucord.Session, r *nucord.Ready) {
 		fmt.Println("Bot is ready")
 	})
 
@@ -33,10 +33,10 @@ func main() {
 	defer s.Close()
 
 	// Create a new Stage instance on the previous channel
-	si, err := s.StageInstanceCreate(&discordgo.StageInstanceParams{
+	si, err := s.StageInstanceCreate(&nucord.StageInstanceParams{
 		ChannelID:             *StageChannelID,
 		Topic:                 "Amazing topic",
-		PrivacyLevel:          discordgo.StageInstancePrivacyLevelGuildOnly,
+		PrivacyLevel:          nucord.StageInstancePrivacyLevelGuildOnly,
 		SendStartNotification: true,
 	})
 	if err != nil {
@@ -45,7 +45,7 @@ func main() {
 	log.Printf("Stage Instance %s has been successfully created", si.Topic)
 
 	// Edit the stage instance with a new Topic
-	si, err = s.StageInstanceEdit(*StageChannelID, &discordgo.StageInstanceParams{
+	si, err = s.StageInstanceEdit(*StageChannelID, &nucord.StageInstanceParams{
 		Topic: "New amazing topic",
 	})
 	if err != nil {

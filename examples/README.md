@@ -1,4 +1,4 @@
-<img align="right" src="https://forge.isaac.zone/isaac/discordgo/blob/master/docs/img/discordgo.png">
+<img align="right" src="https://forge.isaac.zone/isaac/nucord/blob/master/docs/img/nucord.png">
 
 # DiscordGo Examples
 
