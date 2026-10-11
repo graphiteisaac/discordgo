@@ -102,12 +102,14 @@ func (s *Session) addEventHandlerOnce(eventHandler EventHandler) func() {
 // to a struct corresponding to the event for which you want to listen.
 //
 // eg:
-//     Session.AddHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
-//     })
+//
+//	Session.AddHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
+//	})
 //
 // or:
-//     Session.AddHandler(func(s *discordgo.Session, m *discordgo.PresenceUpdate) {
-//     })
+//
+//	Session.AddHandler(func(s *discordgo.Session, m *discordgo.PresenceUpdate) {
+//	})
 //
 // List of events can be found at this page, with corresponding names in the
 // library for each event: https://discord.com/developers/docs/topics/gateway#event-names
@@ -117,6 +119,8 @@ func (s *Session) addEventHandlerOnce(eventHandler EventHandler) func() {
 //
 // The return value of this method is a function, that when called will remove the
 // event handler.
+// Deprecated: Please use Handle<EventName> now instead, which will provide type checking!
+// Example: HandleMessageCreate(s *Session, m *MessageCreate)
 func (s *Session) AddHandler(handler interface{}) func() {
 	eh := handlerForInterface(handler)
 

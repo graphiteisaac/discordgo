@@ -83,6 +83,29 @@ const (
 	webhooksUpdateEventType                      = "WEBHOOKS_UPDATE"
 )
 
+// Used to hold handlers
+type HandlerFunc struct {
+	typ string
+	fn  func(s *Session, d any)
+}
+
+func (h HandlerFunc) Type() string {
+	return h.typ
+}
+
+func (h HandlerFunc) Handle(s *Session, v any) {
+	h.fn(s, v)
+}
+
+func AsHandler[E any](h func(*Session, *E), eventTyp string) HandlerFunc {
+	return HandlerFunc{
+		typ: eventTyp,
+		fn: func(s *Session, v any) {
+			h(s, v.(*E))
+		},
+	}
+}
+
 // applicationCommandPermissionsUpdateEventHandler is an event handler for ApplicationCommandPermissionsUpdate events.
 type applicationCommandPermissionsUpdateEventHandler func(*Session, *ApplicationCommandPermissionsUpdate)
 
@@ -101,6 +124,11 @@ func (eh applicationCommandPermissionsUpdateEventHandler) Handle(s *Session, i i
 	if t, ok := i.(*ApplicationCommandPermissionsUpdate); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the APPLICATION_COMMAND_PERMISSIONS_UPDATE event
+func (s *Session) HandleApplicationCommandPermissionsUpdate(h func(s *Session, d *ApplicationCommandPermissionsUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, applicationCommandPermissionsUpdateEventType))
 }
 
 // autoModerationActionExecutionEventHandler is an event handler for AutoModerationActionExecution events.
@@ -123,6 +151,11 @@ func (eh autoModerationActionExecutionEventHandler) Handle(s *Session, i interfa
 	}
 }
 
+// Handle the AUTO_MODERATION_ACTION_EXECUTION event
+func (s *Session) HandleAutoModerationActionExecution(h func(s *Session, d *AutoModerationActionExecution)) func() {
+	return s.addEventHandler(AsHandler(h, autoModerationActionExecutionEventType))
+}
+
 // autoModerationRuleCreateEventHandler is an event handler for AutoModerationRuleCreate events.
 type autoModerationRuleCreateEventHandler func(*Session, *AutoModerationRuleCreate)
 
@@ -141,6 +174,11 @@ func (eh autoModerationRuleCreateEventHandler) Handle(s *Session, i interface{})
 	if t, ok := i.(*AutoModerationRuleCreate); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the AUTO_MODERATION_RULE_CREATE event
+func (s *Session) HandleAutoModerationRuleCreate(h func(s *Session, d *AutoModerationRuleCreate)) func() {
+	return s.addEventHandler(AsHandler(h, autoModerationRuleCreateEventType))
 }
 
 // autoModerationRuleDeleteEventHandler is an event handler for AutoModerationRuleDelete events.
@@ -163,6 +201,11 @@ func (eh autoModerationRuleDeleteEventHandler) Handle(s *Session, i interface{})
 	}
 }
 
+// Handle the AUTO_MODERATION_RULE_DELETE event
+func (s *Session) HandleAutoModerationRuleDelete(h func(s *Session, d *AutoModerationRuleDelete)) func() {
+	return s.addEventHandler(AsHandler(h, autoModerationRuleDeleteEventType))
+}
+
 // autoModerationRuleUpdateEventHandler is an event handler for AutoModerationRuleUpdate events.
 type autoModerationRuleUpdateEventHandler func(*Session, *AutoModerationRuleUpdate)
 
@@ -181,6 +224,11 @@ func (eh autoModerationRuleUpdateEventHandler) Handle(s *Session, i interface{})
 	if t, ok := i.(*AutoModerationRuleUpdate); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the AUTO_MODERATION_RULE_UPDATE event
+func (s *Session) HandleAutoModerationRuleUpdate(h func(s *Session, d *AutoModerationRuleUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, autoModerationRuleUpdateEventType))
 }
 
 // channelCreateEventHandler is an event handler for ChannelCreate events.
@@ -203,6 +251,11 @@ func (eh channelCreateEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the CHANNEL_CREATE event
+func (s *Session) HandleChannelCreate(h func(s *Session, d *ChannelCreate)) func() {
+	return s.addEventHandler(AsHandler(h, channelCreateEventType))
+}
+
 // channelDeleteEventHandler is an event handler for ChannelDelete events.
 type channelDeleteEventHandler func(*Session, *ChannelDelete)
 
@@ -221,6 +274,11 @@ func (eh channelDeleteEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*ChannelDelete); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the CHANNEL_DELETE event
+func (s *Session) HandleChannelDelete(h func(s *Session, d *ChannelDelete)) func() {
+	return s.addEventHandler(AsHandler(h, channelDeleteEventType))
 }
 
 // channelPinsUpdateEventHandler is an event handler for ChannelPinsUpdate events.
@@ -243,6 +301,11 @@ func (eh channelPinsUpdateEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the CHANNEL_PINS_UPDATE event
+func (s *Session) HandleChannelPinsUpdate(h func(s *Session, d *ChannelPinsUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, channelPinsUpdateEventType))
+}
+
 // channelUpdateEventHandler is an event handler for ChannelUpdate events.
 type channelUpdateEventHandler func(*Session, *ChannelUpdate)
 
@@ -263,6 +326,11 @@ func (eh channelUpdateEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the CHANNEL_UPDATE event
+func (s *Session) HandleChannelUpdate(h func(s *Session, d *ChannelUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, channelUpdateEventType))
+}
+
 // connectEventHandler is an event handler for Connect events.
 type connectEventHandler func(*Session, *Connect)
 
@@ -278,6 +346,11 @@ func (eh connectEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the __CONNECT__ event
+func (s *Session) HandleConnect(h func(s *Session, d *Connect)) func() {
+	return s.addEventHandler(AsHandler(h, connectEventType))
+}
+
 // disconnectEventHandler is an event handler for Disconnect events.
 type disconnectEventHandler func(*Session, *Disconnect)
 
@@ -291,6 +364,11 @@ func (eh disconnectEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*Disconnect); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the __DISCONNECT__ event
+func (s *Session) HandleDisconnect(h func(s *Session, d *Disconnect)) func() {
+	return s.addEventHandler(AsHandler(h, disconnectEventType))
 }
 
 // entitlementCreateEventHandler is an event handler for EntitlementCreate events.
@@ -313,6 +391,11 @@ func (eh entitlementCreateEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the ENTITLEMENT_CREATE event
+func (s *Session) HandleEntitlementCreate(h func(s *Session, d *EntitlementCreate)) func() {
+	return s.addEventHandler(AsHandler(h, entitlementCreateEventType))
+}
+
 // entitlementDeleteEventHandler is an event handler for EntitlementDelete events.
 type entitlementDeleteEventHandler func(*Session, *EntitlementDelete)
 
@@ -331,6 +414,11 @@ func (eh entitlementDeleteEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*EntitlementDelete); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the ENTITLEMENT_DELETE event
+func (s *Session) HandleEntitlementDelete(h func(s *Session, d *EntitlementDelete)) func() {
+	return s.addEventHandler(AsHandler(h, entitlementDeleteEventType))
 }
 
 // entitlementUpdateEventHandler is an event handler for EntitlementUpdate events.
@@ -353,6 +441,11 @@ func (eh entitlementUpdateEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the ENTITLEMENT_UPDATE event
+func (s *Session) HandleEntitlementUpdate(h func(s *Session, d *EntitlementUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, entitlementUpdateEventType))
+}
+
 // eventEventHandler is an event handler for Event events.
 type eventEventHandler func(*Session, *Event)
 
@@ -366,6 +459,11 @@ func (eh eventEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*Event); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the __EVENT__ event
+func (s *Session) HandleEvent(h func(s *Session, d *Event)) func() {
+	return s.addEventHandler(AsHandler(h, eventEventType))
 }
 
 // guildAuditLogEntryCreateEventHandler is an event handler for GuildAuditLogEntryCreate events.
@@ -388,6 +486,11 @@ func (eh guildAuditLogEntryCreateEventHandler) Handle(s *Session, i interface{})
 	}
 }
 
+// Handle the GUILD_AUDIT_LOG_ENTRY_CREATE event
+func (s *Session) HandleGuildAuditLogEntryCreate(h func(s *Session, d *GuildAuditLogEntryCreate)) func() {
+	return s.addEventHandler(AsHandler(h, guildAuditLogEntryCreateEventType))
+}
+
 // guildBanAddEventHandler is an event handler for GuildBanAdd events.
 type guildBanAddEventHandler func(*Session, *GuildBanAdd)
 
@@ -406,6 +509,11 @@ func (eh guildBanAddEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*GuildBanAdd); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the GUILD_BAN_ADD event
+func (s *Session) HandleGuildBanAdd(h func(s *Session, d *GuildBanAdd)) func() {
+	return s.addEventHandler(AsHandler(h, guildBanAddEventType))
 }
 
 // guildBanRemoveEventHandler is an event handler for GuildBanRemove events.
@@ -428,6 +536,11 @@ func (eh guildBanRemoveEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the GUILD_BAN_REMOVE event
+func (s *Session) HandleGuildBanRemove(h func(s *Session, d *GuildBanRemove)) func() {
+	return s.addEventHandler(AsHandler(h, guildBanRemoveEventType))
+}
+
 // guildCreateEventHandler is an event handler for GuildCreate events.
 type guildCreateEventHandler func(*Session, *GuildCreate)
 
@@ -446,6 +559,11 @@ func (eh guildCreateEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*GuildCreate); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the GUILD_CREATE event
+func (s *Session) HandleGuildCreate(h func(s *Session, d *GuildCreate)) func() {
+	return s.addEventHandler(AsHandler(h, guildCreateEventType))
 }
 
 // guildDeleteEventHandler is an event handler for GuildDelete events.
@@ -468,6 +586,11 @@ func (eh guildDeleteEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the GUILD_DELETE event
+func (s *Session) HandleGuildDelete(h func(s *Session, d *GuildDelete)) func() {
+	return s.addEventHandler(AsHandler(h, guildDeleteEventType))
+}
+
 // guildEmojisUpdateEventHandler is an event handler for GuildEmojisUpdate events.
 type guildEmojisUpdateEventHandler func(*Session, *GuildEmojisUpdate)
 
@@ -486,6 +609,11 @@ func (eh guildEmojisUpdateEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*GuildEmojisUpdate); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the GUILD_EMOJIS_UPDATE event
+func (s *Session) HandleGuildEmojisUpdate(h func(s *Session, d *GuildEmojisUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, guildEmojisUpdateEventType))
 }
 
 // guildIntegrationsUpdateEventHandler is an event handler for GuildIntegrationsUpdate events.
@@ -508,6 +636,11 @@ func (eh guildIntegrationsUpdateEventHandler) Handle(s *Session, i interface{}) 
 	}
 }
 
+// Handle the GUILD_INTEGRATIONS_UPDATE event
+func (s *Session) HandleGuildIntegrationsUpdate(h func(s *Session, d *GuildIntegrationsUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, guildIntegrationsUpdateEventType))
+}
+
 // guildMemberAddEventHandler is an event handler for GuildMemberAdd events.
 type guildMemberAddEventHandler func(*Session, *GuildMemberAdd)
 
@@ -526,6 +659,11 @@ func (eh guildMemberAddEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*GuildMemberAdd); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the GUILD_MEMBER_ADD event
+func (s *Session) HandleGuildMemberAdd(h func(s *Session, d *GuildMemberAdd)) func() {
+	return s.addEventHandler(AsHandler(h, guildMemberAddEventType))
 }
 
 // guildMemberRemoveEventHandler is an event handler for GuildMemberRemove events.
@@ -548,6 +686,11 @@ func (eh guildMemberRemoveEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the GUILD_MEMBER_REMOVE event
+func (s *Session) HandleGuildMemberRemove(h func(s *Session, d *GuildMemberRemove)) func() {
+	return s.addEventHandler(AsHandler(h, guildMemberRemoveEventType))
+}
+
 // guildMemberUpdateEventHandler is an event handler for GuildMemberUpdate events.
 type guildMemberUpdateEventHandler func(*Session, *GuildMemberUpdate)
 
@@ -566,6 +709,11 @@ func (eh guildMemberUpdateEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*GuildMemberUpdate); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the GUILD_MEMBER_UPDATE event
+func (s *Session) HandleGuildMemberUpdate(h func(s *Session, d *GuildMemberUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, guildMemberUpdateEventType))
 }
 
 // guildMembersChunkEventHandler is an event handler for GuildMembersChunk events.
@@ -588,6 +736,11 @@ func (eh guildMembersChunkEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the GUILD_MEMBERS_CHUNK event
+func (s *Session) HandleGuildMembersChunk(h func(s *Session, d *GuildMembersChunk)) func() {
+	return s.addEventHandler(AsHandler(h, guildMembersChunkEventType))
+}
+
 // guildRoleCreateEventHandler is an event handler for GuildRoleCreate events.
 type guildRoleCreateEventHandler func(*Session, *GuildRoleCreate)
 
@@ -606,6 +759,11 @@ func (eh guildRoleCreateEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*GuildRoleCreate); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the GUILD_ROLE_CREATE event
+func (s *Session) HandleGuildRoleCreate(h func(s *Session, d *GuildRoleCreate)) func() {
+	return s.addEventHandler(AsHandler(h, guildRoleCreateEventType))
 }
 
 // guildRoleDeleteEventHandler is an event handler for GuildRoleDelete events.
@@ -628,6 +786,11 @@ func (eh guildRoleDeleteEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the GUILD_ROLE_DELETE event
+func (s *Session) HandleGuildRoleDelete(h func(s *Session, d *GuildRoleDelete)) func() {
+	return s.addEventHandler(AsHandler(h, guildRoleDeleteEventType))
+}
+
 // guildRoleUpdateEventHandler is an event handler for GuildRoleUpdate events.
 type guildRoleUpdateEventHandler func(*Session, *GuildRoleUpdate)
 
@@ -646,6 +809,11 @@ func (eh guildRoleUpdateEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*GuildRoleUpdate); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the GUILD_ROLE_UPDATE event
+func (s *Session) HandleGuildRoleUpdate(h func(s *Session, d *GuildRoleUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, guildRoleUpdateEventType))
 }
 
 // guildScheduledEventCreateEventHandler is an event handler for GuildScheduledEventCreate events.
@@ -668,6 +836,11 @@ func (eh guildScheduledEventCreateEventHandler) Handle(s *Session, i interface{}
 	}
 }
 
+// Handle the GUILD_SCHEDULED_EVENT_CREATE event
+func (s *Session) HandleGuildScheduledEventCreate(h func(s *Session, d *GuildScheduledEventCreate)) func() {
+	return s.addEventHandler(AsHandler(h, guildScheduledEventCreateEventType))
+}
+
 // guildScheduledEventDeleteEventHandler is an event handler for GuildScheduledEventDelete events.
 type guildScheduledEventDeleteEventHandler func(*Session, *GuildScheduledEventDelete)
 
@@ -686,6 +859,11 @@ func (eh guildScheduledEventDeleteEventHandler) Handle(s *Session, i interface{}
 	if t, ok := i.(*GuildScheduledEventDelete); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the GUILD_SCHEDULED_EVENT_DELETE event
+func (s *Session) HandleGuildScheduledEventDelete(h func(s *Session, d *GuildScheduledEventDelete)) func() {
+	return s.addEventHandler(AsHandler(h, guildScheduledEventDeleteEventType))
 }
 
 // guildScheduledEventUpdateEventHandler is an event handler for GuildScheduledEventUpdate events.
@@ -708,6 +886,11 @@ func (eh guildScheduledEventUpdateEventHandler) Handle(s *Session, i interface{}
 	}
 }
 
+// Handle the GUILD_SCHEDULED_EVENT_UPDATE event
+func (s *Session) HandleGuildScheduledEventUpdate(h func(s *Session, d *GuildScheduledEventUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, guildScheduledEventUpdateEventType))
+}
+
 // guildScheduledEventUserAddEventHandler is an event handler for GuildScheduledEventUserAdd events.
 type guildScheduledEventUserAddEventHandler func(*Session, *GuildScheduledEventUserAdd)
 
@@ -726,6 +909,11 @@ func (eh guildScheduledEventUserAddEventHandler) Handle(s *Session, i interface{
 	if t, ok := i.(*GuildScheduledEventUserAdd); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the GUILD_SCHEDULED_EVENT_USER_ADD event
+func (s *Session) HandleGuildScheduledEventUserAdd(h func(s *Session, d *GuildScheduledEventUserAdd)) func() {
+	return s.addEventHandler(AsHandler(h, guildScheduledEventUserAddEventType))
 }
 
 // guildScheduledEventUserRemoveEventHandler is an event handler for GuildScheduledEventUserRemove events.
@@ -748,6 +936,11 @@ func (eh guildScheduledEventUserRemoveEventHandler) Handle(s *Session, i interfa
 	}
 }
 
+// Handle the GUILD_SCHEDULED_EVENT_USER_REMOVE event
+func (s *Session) HandleGuildScheduledEventUserRemove(h func(s *Session, d *GuildScheduledEventUserRemove)) func() {
+	return s.addEventHandler(AsHandler(h, guildScheduledEventUserRemoveEventType))
+}
+
 // guildStickersUpdateEventHandler is an event handler for GuildStickersUpdate events.
 type guildStickersUpdateEventHandler func(*Session, *GuildStickersUpdate)
 
@@ -766,6 +959,11 @@ func (eh guildStickersUpdateEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*GuildStickersUpdate); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the GUILD_STICKERS_UPDATE event
+func (s *Session) HandleGuildStickersUpdate(h func(s *Session, d *GuildStickersUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, guildStickersUpdateEventType))
 }
 
 // guildUpdateEventHandler is an event handler for GuildUpdate events.
@@ -788,6 +986,11 @@ func (eh guildUpdateEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the GUILD_UPDATE event
+func (s *Session) HandleGuildUpdate(h func(s *Session, d *GuildUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, guildUpdateEventType))
+}
+
 // integrationCreateEventHandler is an event handler for IntegrationCreate events.
 type integrationCreateEventHandler func(*Session, *IntegrationCreate)
 
@@ -806,6 +1009,11 @@ func (eh integrationCreateEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*IntegrationCreate); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the INTEGRATION_CREATE event
+func (s *Session) HandleIntegrationCreate(h func(s *Session, d *IntegrationCreate)) func() {
+	return s.addEventHandler(AsHandler(h, integrationCreateEventType))
 }
 
 // integrationDeleteEventHandler is an event handler for IntegrationDelete events.
@@ -828,6 +1036,11 @@ func (eh integrationDeleteEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the INTEGRATION_DELETE event
+func (s *Session) HandleIntegrationDelete(h func(s *Session, d *IntegrationDelete)) func() {
+	return s.addEventHandler(AsHandler(h, integrationDeleteEventType))
+}
+
 // integrationUpdateEventHandler is an event handler for IntegrationUpdate events.
 type integrationUpdateEventHandler func(*Session, *IntegrationUpdate)
 
@@ -846,6 +1059,11 @@ func (eh integrationUpdateEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*IntegrationUpdate); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the INTEGRATION_UPDATE event
+func (s *Session) HandleIntegrationUpdate(h func(s *Session, d *IntegrationUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, integrationUpdateEventType))
 }
 
 // interactionCreateEventHandler is an event handler for InteractionCreate events.
@@ -868,6 +1086,11 @@ func (eh interactionCreateEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the INTERACTION_CREATE event
+func (s *Session) HandleInteractionCreate(h func(s *Session, d *InteractionCreate)) func() {
+	return s.addEventHandler(AsHandler(h, interactionCreateEventType))
+}
+
 // inviteCreateEventHandler is an event handler for InviteCreate events.
 type inviteCreateEventHandler func(*Session, *InviteCreate)
 
@@ -886,6 +1109,11 @@ func (eh inviteCreateEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*InviteCreate); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the INVITE_CREATE event
+func (s *Session) HandleInviteCreate(h func(s *Session, d *InviteCreate)) func() {
+	return s.addEventHandler(AsHandler(h, inviteCreateEventType))
 }
 
 // inviteDeleteEventHandler is an event handler for InviteDelete events.
@@ -908,6 +1136,11 @@ func (eh inviteDeleteEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the INVITE_DELETE event
+func (s *Session) HandleInviteDelete(h func(s *Session, d *InviteDelete)) func() {
+	return s.addEventHandler(AsHandler(h, inviteDeleteEventType))
+}
+
 // messageCreateEventHandler is an event handler for MessageCreate events.
 type messageCreateEventHandler func(*Session, *MessageCreate)
 
@@ -926,6 +1159,11 @@ func (eh messageCreateEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*MessageCreate); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the MESSAGE_CREATE event
+func (s *Session) HandleMessageCreate(h func(s *Session, d *MessageCreate)) func() {
+	return s.addEventHandler(AsHandler(h, messageCreateEventType))
 }
 
 // messageDeleteEventHandler is an event handler for MessageDelete events.
@@ -948,6 +1186,11 @@ func (eh messageDeleteEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the MESSAGE_DELETE event
+func (s *Session) HandleMessageDelete(h func(s *Session, d *MessageDelete)) func() {
+	return s.addEventHandler(AsHandler(h, messageDeleteEventType))
+}
+
 // messageDeleteBulkEventHandler is an event handler for MessageDeleteBulk events.
 type messageDeleteBulkEventHandler func(*Session, *MessageDeleteBulk)
 
@@ -966,6 +1209,11 @@ func (eh messageDeleteBulkEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*MessageDeleteBulk); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the MESSAGE_DELETE_BULK event
+func (s *Session) HandleMessageDeleteBulk(h func(s *Session, d *MessageDeleteBulk)) func() {
+	return s.addEventHandler(AsHandler(h, messageDeleteBulkEventType))
 }
 
 // messagePollVoteAddEventHandler is an event handler for MessagePollVoteAdd events.
@@ -988,6 +1236,11 @@ func (eh messagePollVoteAddEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the MESSAGE_POLL_VOTE_ADD event
+func (s *Session) HandleMessagePollVoteAdd(h func(s *Session, d *MessagePollVoteAdd)) func() {
+	return s.addEventHandler(AsHandler(h, messagePollVoteAddEventType))
+}
+
 // messagePollVoteRemoveEventHandler is an event handler for MessagePollVoteRemove events.
 type messagePollVoteRemoveEventHandler func(*Session, *MessagePollVoteRemove)
 
@@ -1006,6 +1259,11 @@ func (eh messagePollVoteRemoveEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*MessagePollVoteRemove); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the MESSAGE_POLL_VOTE_REMOVE event
+func (s *Session) HandleMessagePollVoteRemove(h func(s *Session, d *MessagePollVoteRemove)) func() {
+	return s.addEventHandler(AsHandler(h, messagePollVoteRemoveEventType))
 }
 
 // messageReactionAddEventHandler is an event handler for MessageReactionAdd events.
@@ -1028,6 +1286,11 @@ func (eh messageReactionAddEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the MESSAGE_REACTION_ADD event
+func (s *Session) HandleMessageReactionAdd(h func(s *Session, d *MessageReactionAdd)) func() {
+	return s.addEventHandler(AsHandler(h, messageReactionAddEventType))
+}
+
 // messageReactionRemoveEventHandler is an event handler for MessageReactionRemove events.
 type messageReactionRemoveEventHandler func(*Session, *MessageReactionRemove)
 
@@ -1046,6 +1309,11 @@ func (eh messageReactionRemoveEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*MessageReactionRemove); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the MESSAGE_REACTION_REMOVE event
+func (s *Session) HandleMessageReactionRemove(h func(s *Session, d *MessageReactionRemove)) func() {
+	return s.addEventHandler(AsHandler(h, messageReactionRemoveEventType))
 }
 
 // messageReactionRemoveAllEventHandler is an event handler for MessageReactionRemoveAll events.
@@ -1068,6 +1336,11 @@ func (eh messageReactionRemoveAllEventHandler) Handle(s *Session, i interface{})
 	}
 }
 
+// Handle the MESSAGE_REACTION_REMOVE_ALL event
+func (s *Session) HandleMessageReactionRemoveAll(h func(s *Session, d *MessageReactionRemoveAll)) func() {
+	return s.addEventHandler(AsHandler(h, messageReactionRemoveAllEventType))
+}
+
 // messageReactionRemoveEmojiEventHandler is an event handler for MessageReactionRemoveEmoji events.
 type messageReactionRemoveEmojiEventHandler func(*Session, *MessageReactionRemoveEmoji)
 
@@ -1086,6 +1359,11 @@ func (eh messageReactionRemoveEmojiEventHandler) Handle(s *Session, i interface{
 	if t, ok := i.(*MessageReactionRemoveEmoji); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the MESSAGE_REACTION_REMOVE_EMOJI event
+func (s *Session) HandleMessageReactionRemoveEmoji(h func(s *Session, d *MessageReactionRemoveEmoji)) func() {
+	return s.addEventHandler(AsHandler(h, messageReactionRemoveEmojiEventType))
 }
 
 // messageUpdateEventHandler is an event handler for MessageUpdate events.
@@ -1108,6 +1386,11 @@ func (eh messageUpdateEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the MESSAGE_UPDATE event
+func (s *Session) HandleMessageUpdate(h func(s *Session, d *MessageUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, messageUpdateEventType))
+}
+
 // presenceUpdateEventHandler is an event handler for PresenceUpdate events.
 type presenceUpdateEventHandler func(*Session, *PresenceUpdate)
 
@@ -1126,6 +1409,11 @@ func (eh presenceUpdateEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*PresenceUpdate); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the PRESENCE_UPDATE event
+func (s *Session) HandlePresenceUpdate(h func(s *Session, d *PresenceUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, presenceUpdateEventType))
 }
 
 // presencesReplaceEventHandler is an event handler for PresencesReplace events.
@@ -1148,6 +1436,11 @@ func (eh presencesReplaceEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the PRESENCES_REPLACE event
+func (s *Session) HandlePresencesReplace(h func(s *Session, d *PresencesReplace)) func() {
+	return s.addEventHandler(AsHandler(h, presencesReplaceEventType))
+}
+
 // rateLimitEventHandler is an event handler for RateLimit events.
 type rateLimitEventHandler func(*Session, *RateLimit)
 
@@ -1161,6 +1454,11 @@ func (eh rateLimitEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*RateLimit); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the __RATE_LIMIT__ event
+func (s *Session) HandleRateLimit(h func(s *Session, d *RateLimit)) func() {
+	return s.addEventHandler(AsHandler(h, rateLimitEventType))
 }
 
 // readyEventHandler is an event handler for Ready events.
@@ -1183,6 +1481,11 @@ func (eh readyEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the READY event
+func (s *Session) HandleReady(h func(s *Session, d *Ready)) func() {
+	return s.addEventHandler(AsHandler(h, readyEventType))
+}
+
 // resumedEventHandler is an event handler for Resumed events.
 type resumedEventHandler func(*Session, *Resumed)
 
@@ -1201,6 +1504,11 @@ func (eh resumedEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*Resumed); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the RESUMED event
+func (s *Session) HandleResumed(h func(s *Session, d *Resumed)) func() {
+	return s.addEventHandler(AsHandler(h, resumedEventType))
 }
 
 // stageInstanceEventCreateEventHandler is an event handler for StageInstanceEventCreate events.
@@ -1223,6 +1531,11 @@ func (eh stageInstanceEventCreateEventHandler) Handle(s *Session, i interface{})
 	}
 }
 
+// Handle the STAGE_INSTANCE_EVENT_CREATE event
+func (s *Session) HandleStageInstanceEventCreate(h func(s *Session, d *StageInstanceEventCreate)) func() {
+	return s.addEventHandler(AsHandler(h, stageInstanceEventCreateEventType))
+}
+
 // stageInstanceEventDeleteEventHandler is an event handler for StageInstanceEventDelete events.
 type stageInstanceEventDeleteEventHandler func(*Session, *StageInstanceEventDelete)
 
@@ -1241,6 +1554,11 @@ func (eh stageInstanceEventDeleteEventHandler) Handle(s *Session, i interface{})
 	if t, ok := i.(*StageInstanceEventDelete); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the STAGE_INSTANCE_EVENT_DELETE event
+func (s *Session) HandleStageInstanceEventDelete(h func(s *Session, d *StageInstanceEventDelete)) func() {
+	return s.addEventHandler(AsHandler(h, stageInstanceEventDeleteEventType))
 }
 
 // stageInstanceEventUpdateEventHandler is an event handler for StageInstanceEventUpdate events.
@@ -1263,6 +1581,11 @@ func (eh stageInstanceEventUpdateEventHandler) Handle(s *Session, i interface{})
 	}
 }
 
+// Handle the STAGE_INSTANCE_EVENT_UPDATE event
+func (s *Session) HandleStageInstanceEventUpdate(h func(s *Session, d *StageInstanceEventUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, stageInstanceEventUpdateEventType))
+}
+
 // subscriptionCreateEventHandler is an event handler for SubscriptionCreate events.
 type subscriptionCreateEventHandler func(*Session, *SubscriptionCreate)
 
@@ -1281,6 +1604,11 @@ func (eh subscriptionCreateEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*SubscriptionCreate); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the SUBSCRIPTION_CREATE event
+func (s *Session) HandleSubscriptionCreate(h func(s *Session, d *SubscriptionCreate)) func() {
+	return s.addEventHandler(AsHandler(h, subscriptionCreateEventType))
 }
 
 // subscriptionDeleteEventHandler is an event handler for SubscriptionDelete events.
@@ -1303,6 +1631,11 @@ func (eh subscriptionDeleteEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the SUBSCRIPTION_DELETE event
+func (s *Session) HandleSubscriptionDelete(h func(s *Session, d *SubscriptionDelete)) func() {
+	return s.addEventHandler(AsHandler(h, subscriptionDeleteEventType))
+}
+
 // subscriptionUpdateEventHandler is an event handler for SubscriptionUpdate events.
 type subscriptionUpdateEventHandler func(*Session, *SubscriptionUpdate)
 
@@ -1321,6 +1654,11 @@ func (eh subscriptionUpdateEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*SubscriptionUpdate); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the SUBSCRIPTION_UPDATE event
+func (s *Session) HandleSubscriptionUpdate(h func(s *Session, d *SubscriptionUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, subscriptionUpdateEventType))
 }
 
 // threadCreateEventHandler is an event handler for ThreadCreate events.
@@ -1343,6 +1681,11 @@ func (eh threadCreateEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the THREAD_CREATE event
+func (s *Session) HandleThreadCreate(h func(s *Session, d *ThreadCreate)) func() {
+	return s.addEventHandler(AsHandler(h, threadCreateEventType))
+}
+
 // threadDeleteEventHandler is an event handler for ThreadDelete events.
 type threadDeleteEventHandler func(*Session, *ThreadDelete)
 
@@ -1361,6 +1704,11 @@ func (eh threadDeleteEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*ThreadDelete); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the THREAD_DELETE event
+func (s *Session) HandleThreadDelete(h func(s *Session, d *ThreadDelete)) func() {
+	return s.addEventHandler(AsHandler(h, threadDeleteEventType))
 }
 
 // threadListSyncEventHandler is an event handler for ThreadListSync events.
@@ -1383,6 +1731,11 @@ func (eh threadListSyncEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the THREAD_LIST_SYNC event
+func (s *Session) HandleThreadListSync(h func(s *Session, d *ThreadListSync)) func() {
+	return s.addEventHandler(AsHandler(h, threadListSyncEventType))
+}
+
 // threadMemberUpdateEventHandler is an event handler for ThreadMemberUpdate events.
 type threadMemberUpdateEventHandler func(*Session, *ThreadMemberUpdate)
 
@@ -1401,6 +1754,11 @@ func (eh threadMemberUpdateEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*ThreadMemberUpdate); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the THREAD_MEMBER_UPDATE event
+func (s *Session) HandleThreadMemberUpdate(h func(s *Session, d *ThreadMemberUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, threadMemberUpdateEventType))
 }
 
 // threadMembersUpdateEventHandler is an event handler for ThreadMembersUpdate events.
@@ -1423,6 +1781,11 @@ func (eh threadMembersUpdateEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the THREAD_MEMBERS_UPDATE event
+func (s *Session) HandleThreadMembersUpdate(h func(s *Session, d *ThreadMembersUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, threadMembersUpdateEventType))
+}
+
 // threadUpdateEventHandler is an event handler for ThreadUpdate events.
 type threadUpdateEventHandler func(*Session, *ThreadUpdate)
 
@@ -1441,6 +1804,11 @@ func (eh threadUpdateEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*ThreadUpdate); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the THREAD_UPDATE event
+func (s *Session) HandleThreadUpdate(h func(s *Session, d *ThreadUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, threadUpdateEventType))
 }
 
 // typingStartEventHandler is an event handler for TypingStart events.
@@ -1463,6 +1831,11 @@ func (eh typingStartEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the TYPING_START event
+func (s *Session) HandleTypingStart(h func(s *Session, d *TypingStart)) func() {
+	return s.addEventHandler(AsHandler(h, typingStartEventType))
+}
+
 // userUpdateEventHandler is an event handler for UserUpdate events.
 type userUpdateEventHandler func(*Session, *UserUpdate)
 
@@ -1481,6 +1854,11 @@ func (eh userUpdateEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*UserUpdate); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the USER_UPDATE event
+func (s *Session) HandleUserUpdate(h func(s *Session, d *UserUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, userUpdateEventType))
 }
 
 // voiceServerUpdateEventHandler is an event handler for VoiceServerUpdate events.
@@ -1503,6 +1881,11 @@ func (eh voiceServerUpdateEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the VOICE_SERVER_UPDATE event
+func (s *Session) HandleVoiceServerUpdate(h func(s *Session, d *VoiceServerUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, voiceServerUpdateEventType))
+}
+
 // voiceStateUpdateEventHandler is an event handler for VoiceStateUpdate events.
 type voiceStateUpdateEventHandler func(*Session, *VoiceStateUpdate)
 
@@ -1523,6 +1906,11 @@ func (eh voiceStateUpdateEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// Handle the VOICE_STATE_UPDATE event
+func (s *Session) HandleVoiceStateUpdate(h func(s *Session, d *VoiceStateUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, voiceStateUpdateEventType))
+}
+
 // webhooksUpdateEventHandler is an event handler for WebhooksUpdate events.
 type webhooksUpdateEventHandler func(*Session, *WebhooksUpdate)
 
@@ -1541,6 +1929,11 @@ func (eh webhooksUpdateEventHandler) Handle(s *Session, i interface{}) {
 	if t, ok := i.(*WebhooksUpdate); ok {
 		eh(s, t)
 	}
+}
+
+// Handle the WEBHOOKS_UPDATE event
+func (s *Session) HandleWebhooksUpdate(h func(s *Session, d *WebhooksUpdate)) func() {
+	return s.addEventHandler(AsHandler(h, webhooksUpdateEventType))
 }
 
 func handlerForInterface(handler interface{}) EventHandler {

@@ -2,11 +2,12 @@ package main
 
 import (
 	"bytes"
+	"go/ast"
 	"go/format"
 	"go/parser"
 	"go/token"
-	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
 	"regexp"
 	"sort"
@@ -29,6 +30,30 @@ package discordgo
 const ({{range .}}
   {{privateName .}}EventType = "{{constName .}}"{{end}}
 )
+
+// Used to hold handlers
+type HandlerFunc struct {
+	typ string
+	fn  func(s *Session, d any)
+}
+
+func (h HandlerFunc) Type() string {
+	return h.typ
+}
+
+func (h HandlerFunc) Handle(s *Session, v any) {
+	h.fn(s, v)
+}
+
+func AsHandler[E any](h func(*Session, *E), eventTyp string) HandlerFunc {
+	return HandlerFunc{
+		typ: eventTyp,
+		fn: func(s *Session, v any) {
+			h(s, v.(*E))
+		},
+	}
+}
+
 {{range .}}
 // {{privateName .}}EventHandler is an event handler for {{.}} events.
 type {{privateName .}}EventHandler func(*Session, *{{.}})
@@ -47,6 +72,11 @@ func (eh {{privateName .}}EventHandler) Handle(s *Session, i interface{}) {
   if t, ok := i.(*{{.}}); ok {
     eh(s, t)
   }
+}
+
+// Handle the {{ constName . }} event 
+func (s *Session) Handle{{ .}}(h func(s *Session, d *{{. }})) func() {
+	return s.addEventHandler(AsHandler(h, {{privateName . }}EventType))
 }
 
 {{end}}
@@ -71,15 +101,27 @@ func main() {
 	dir := filepath.Dir(".")
 
 	fs := token.NewFileSet()
-	parsedFile, err := parser.ParseFile(fs, "events.go", nil, 0)
+	parsedFile, err := parser.ParseFile(fs, "events.go", nil, parser.SkipObjectResolution)
 	if err != nil {
 		log.Fatalf("warning: internal error: could not parse events.go: %s", err)
 		return
 	}
 
 	names := []string{}
-	for object := range parsedFile.Scope.Objects {
-		names = append(names, object)
+	for _, decl := range parsedFile.Decls {
+		switch d := decl.(type) {
+		case *ast.GenDecl:
+			for _, spec := range d.Specs {
+				switch s := spec.(type) {
+				case *ast.TypeSpec:
+					names = append(names, s.Name.Name)
+				case *ast.ValueSpec: // Handles both var and const
+					for _, id := range s.Names {
+						names = append(names, id.Name)
+					}
+				}
+			}
+		}
 	}
 	sort.Strings(names)
 	eventHandlerTmpl.Execute(&buf, names)
@@ -90,7 +132,7 @@ func main() {
 		src = buf.Bytes()
 	}
 
-	err = ioutil.WriteFile(filepath.Join(dir, strings.ToLower("eventhandlers.go")), src, 0644)
+	err = os.WriteFile(filepath.Join(dir, strings.ToLower("eventhandlers.go")), src, 0644)
 	if err != nil {
 		log.Fatal(buf, "writing output: %s", err)
 	}

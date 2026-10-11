@@ -81,7 +81,7 @@ func main() {
 
 	session, _ := discordgo.New("Bot " + *Token)
 
-	session.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	session.HandleInteractionCreate(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		if i.Type != discordgo.InteractionApplicationCommand {
 			return
 		}
@@ -94,7 +94,7 @@ func main() {
 		handleEcho(s, i, parseOptions(data.Options))
 	})
 
-	session.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
+	session.HandleReady(func(s *discordgo.Session, r *discordgo.Ready) {
 		log.Printf("Logged in as %s", r.User.String())
 	})
 
