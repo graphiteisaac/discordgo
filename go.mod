@@ -1,5 +1,5 @@
-module github.com/bwmarrin/discordgo
+module forge.isaac.zone/isaac/discordgo
 
 go 1.13
 
-require github.com/gorilla/websocket v1.4.2
+require github.com/gorilla/websocket v1.5.3

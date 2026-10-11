@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bwmarrin/discordgo"
+	"forge.isaac.zone/isaac/discordgo"
 )
 
 // Flags
